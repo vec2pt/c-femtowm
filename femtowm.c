@@ -16,7 +16,7 @@ int main()
 {
     xcb_connection_t* connection;
     xcb_screen_t* screen;
-    xcb_get_geometry_reply_t* geom;
+    xcb_get_geometry_reply_t* geom = XCB_NONE;
     xcb_button_press_event_t start = { 0 };
     xcb_generic_event_t* ev;
 
@@ -37,10 +37,8 @@ int main()
     xcb_flush(connection);
 
     start.child = XCB_NONE;
-    for (;;)
+    while ((ev = xcb_wait_for_event(connection)))
     {
-        ev = xcb_wait_for_event(connection);
-
         uint8_t response_type = ev->response_type & ~0x80;
         if (response_type == XCB_KEY_PRESS)
         {
